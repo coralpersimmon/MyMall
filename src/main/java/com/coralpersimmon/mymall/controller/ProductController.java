@@ -1,6 +1,7 @@
 package com.coralpersimmon.mymall.controller;
 
 import com.coralpersimmon.mymall.constant.ProductCategory;
+import com.coralpersimmon.mymall.dto.ProductQueryParams;
 import com.coralpersimmon.mymall.dto.ProductRequest;
 import com.coralpersimmon.mymall.model.Product;
 import com.coralpersimmon.mymall.service.ProductService;
@@ -21,7 +22,11 @@ public class ProductController {
     @GetMapping("/products")
     public ResponseEntity<List<Product>> getProducts(@RequestParam(required = false) ProductCategory category,
                                                      @RequestParam(required = false) String search) {
-        List<Product> productList = productService.getProducts(category,search);
+        ProductQueryParams productQueryParams = new ProductQueryParams();
+        productQueryParams.setCategory(category);
+        productQueryParams.setSearch(search);
+
+        List<Product> productList = productService.getProducts(productQueryParams);
         return ResponseEntity.status(HttpStatus.OK).body(productList);
     }
 

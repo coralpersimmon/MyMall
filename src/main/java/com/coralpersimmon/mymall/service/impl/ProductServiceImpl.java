@@ -1,7 +1,7 @@
 package com.coralpersimmon.mymall.service.impl;
 
-import com.coralpersimmon.mymall.constant.ProductCategory;
 import com.coralpersimmon.mymall.dao.ProductDao;
+import com.coralpersimmon.mymall.dto.ProductQueryParams;
 import com.coralpersimmon.mymall.dto.ProductRequest;
 import com.coralpersimmon.mymall.model.Product;
 import com.coralpersimmon.mymall.service.ProductService;
@@ -17,8 +17,8 @@ public class ProductServiceImpl implements ProductService {
     private ProductDao productDao;
 
     @Override
-    public List<Product> getProducts(ProductCategory category, String search) {
-        return productDao.getProducts(category, search);
+    public List<Product> getProducts(ProductQueryParams productQueryParams) {
+        return productDao.getProducts(productQueryParams);
     }
 
     @Override
