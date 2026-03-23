@@ -9,11 +9,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class ProductController {
 
     @Autowired
     private ProductService productService;
+
+    @GetMapping("/products")
+    public ResponseEntity<List<Product>> getProducts() {
+        List<Product> productList = productService.getProducts();
+        return ResponseEntity.status(HttpStatus.OK).body(productList);
+    }
 
     @GetMapping("/products/{productId}")
     public ResponseEntity<Product> getProductById(@PathVariable Integer productId) {
@@ -21,7 +29,7 @@ public class ProductController {
 
         if (product != null) {
             return ResponseEntity.ok(product);
-        }  else {
+        } else {
             return ResponseEntity.notFound().build();
         }
     }
@@ -35,8 +43,7 @@ public class ProductController {
     }
 
     @PutMapping("/products/{productId}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Integer productId,
-                                                 @RequestBody @Valid ProductRequest productRequest) {
+    public ResponseEntity<Product> updateProduct(@PathVariable Integer productId, @RequestBody @Valid ProductRequest productRequest) {
 
         // 檢查product是否存在
         Product product = productService.getProductById(productId);
@@ -45,12 +52,12 @@ public class ProductController {
         }
 
         // 修改商品數據
-        productService.updateProduct(productId,productRequest);
+        productService.updateProduct(productId, productRequest);
         return ResponseEntity.ok(productService.getProductById(productId));
     }
 
     @DeleteMapping("/products/{productId}")
-    public ResponseEntity<?>  deleteProduct(@PathVariable Integer productId) {
+    public ResponseEntity<?> deleteProduct(@PathVariable Integer productId) {
         productService.deleteProductById(productId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

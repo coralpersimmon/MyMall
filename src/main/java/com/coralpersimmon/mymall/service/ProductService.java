@@ -3,7 +3,11 @@ package com.coralpersimmon.mymall.service;
 import com.coralpersimmon.mymall.dto.ProductRequest;
 import com.coralpersimmon.mymall.model.Product;
 
+import java.util.List;
+
 public interface ProductService {
+
+    List<Product> getProducts();
 
     Product getProductById(Integer productId);
 
