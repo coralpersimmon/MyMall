@@ -5,6 +5,7 @@ import com.coralpersimmon.mymall.dto.ProductQueryParams;
 import com.coralpersimmon.mymall.dto.ProductRequest;
 import com.coralpersimmon.mymall.model.Product;
 import com.coralpersimmon.mymall.service.ProductService;
+import com.coralpersimmon.mymall.util.Page;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -24,15 +25,15 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping("/products")
-    public ResponseEntity<List<Product>> getProducts(// 查詢條件 Filtering
-                                                     @RequestParam(required = false) ProductCategory category,
-                                                     @RequestParam(required = false) String search,
-                                                     // 排序 Sorting
-                                                     @RequestParam(defaultValue = "created_date") String orderBy,
-                                                     @RequestParam(defaultValue = "desc") String sort,
-                                                     // 分頁 Pagination
-                                                     @RequestParam(defaultValue = "5") @Max(1000) @Min(0) Integer limit,
-                                                     @RequestParam(defaultValue = "0") @Min(0) Integer offset) {
+    public ResponseEntity<Page<Product>> getProducts(// 查詢條件 Filtering
+                                            @RequestParam(required = false) ProductCategory category,
+                                            @RequestParam(required = false) String search,
+                                            // 排序 Sorting
+                                            @RequestParam(defaultValue = "created_date") String orderBy,
+                                            @RequestParam(defaultValue = "desc") String sort,
+                                            // 分頁 Pagination
+                                            @RequestParam(defaultValue = "5") @Max(1000) @Min(0) Integer limit,
+                                            @RequestParam(defaultValue = "0") @Min(0) Integer offset) {
         ProductQueryParams productQueryParams = new ProductQueryParams();
         productQueryParams.setCategory(category);
         productQueryParams.setSearch(search);
@@ -41,8 +42,19 @@ public class ProductController {
         productQueryParams.setLimit(limit);
         productQueryParams.setOffset(offset);
 
+        // 取得product list
         List<Product> productList = productService.getProducts(productQueryParams);
-        return ResponseEntity.status(HttpStatus.OK).body(productList);
+        // 取得product總數
+        Integer total = productService.countProduct(productQueryParams);
+
+        // 分頁
+        Page<Product> page = new Page<>();
+        page.setLimit(limit);
+        page.setOffset(offset);
+        page.setTotal(total);
+        page.setResults(productList);
+
+        return ResponseEntity.status(HttpStatus.OK).body(page);
     }
 
     @GetMapping("/products/{productId}")
